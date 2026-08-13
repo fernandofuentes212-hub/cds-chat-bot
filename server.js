@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3000;
 
-// Ruta de verificación del Webhook para Meta
+// Ruta de verificaciÃ³n del Webhook para Meta
 app.get('/webhook', (req, res) => {
     const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 
