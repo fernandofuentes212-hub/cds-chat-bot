@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { handleMessage } = require('./src/bot'); // Apunta correctamente a la carpeta src
+const { handleMessage } = require('./src/bot');
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,6 +28,9 @@ app.get('/webhook', (req, res) => {
 
 // Ruta para recibir los mensajes de WhatsApp
 app.post('/webhook', async (req, res) => {
+    // Muestra en los logs cualquier cosa que Meta envíe para depurar
+    console.log('Webhook recibido:', JSON.stringify(req.body, null, 2));
+
     const body = req.body;
 
     if (body.object === 'whatsapp_business_account') {
@@ -35,12 +38,10 @@ app.post('/webhook', async (req, res) => {
             for (const entry of body.entry) {
                 for (const change of entry.changes) {
                     if (change.field === 'messages') {
-                        const metadata = change.value.metadata;
                         const messages = change.value.messages;
 
                         if (messages && messages.length > 0) {
                             const message = messages[0];
-                            // Llama a handleMessage pasando solo el mensaje (el ID se lee de process.env dentro de bot.js)
                             await handleMessage(message);
                         }
                     }
