@@ -2,7 +2,7 @@ const axios = require('axios');
 const { getLatestPromo } = require('./supabase');
 
 async function handleMessage(message) {
-    const senderPhone = message.from; // Número del cliente
+    const senderPhone = message.from; // Número real de quien escribe
     const messageText = message.text?.body?.toLowerCase().trim();
 
     if (!messageText) return;
@@ -21,7 +21,7 @@ async function handleMessage(message) {
                 return;
             }
 
-            // Enviar la imagen con el enlace obtenido de Supabase
+            // Enviar la imagen con el enlace obtenido de Supabase al número que escribió
             await axios.post(
                 url,
                 {
