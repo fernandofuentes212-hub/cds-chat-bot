@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { handleMessage } = require('./bot');
+const { handleMessage } = require('./src/bot'); // Apunta correctamente a la carpeta src
 
 const app = express();
 app.use(bodyParser.json());
@@ -40,7 +40,7 @@ app.post('/webhook', async (req, res) => {
 
                         if (messages && messages.length > 0) {
                             const message = messages[0];
-                            // Llama a handleMessage pasando solo el mensaje (el ID se lee de process.env dentro)
+                            // Llama a handleMessage pasando solo el mensaje (el ID se lee de process.env dentro de bot.js)
                             await handleMessage(message);
                         }
                     }
