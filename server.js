@@ -8,8 +8,8 @@ app.use(bodyParser.json());
 const PORT = process.env.PORT || 10000;
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 
-// Ruta de verificación del Webhook para Meta
-app.get('/webhook', (req, res) => {
+// Ruta de verificación del Webhook actualizada
+app.get('/api/webhook', (req, res) => {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
@@ -26,9 +26,8 @@ app.get('/webhook', (req, res) => {
     }
 });
 
-// Ruta para recibir los mensajes de WhatsApp
-app.post('/webhook', async (req, res) => {
-    // Muestra en los logs cualquier cosa que Meta envíe para depurar
+// Ruta POST actualizada para recibir los mensajes
+app.post('/api/webhook', async (req, res) => {
     console.log('Webhook recibido:', JSON.stringify(req.body, null, 2));
 
     const body = req.body;
