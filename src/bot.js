@@ -8,7 +8,7 @@ async function handleMessage(message) {
     if (!messageText) return;
 
     const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
-    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID; // Lee correctamente el ID desde las variables de entorno de Render
+    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
     const url = `https://graph.facebook.com/v17.0/${phoneId}/messages`;
 
     // Si el usuario pide la promoción
@@ -41,7 +41,8 @@ async function handleMessage(message) {
                 }
             );
         } catch (error) {
-            console.error('Error al enviar la promoción por WhatsApp:', error.response?.data || error.message);
+            // Imprime el error exacto que devuelve Meta para diagnosticarlo de inmediato
+            console.error('Error detallado de Meta:', JSON.stringify(error.response?.data, null, 2));
         }
     } else {
         // Respuesta predeterminada para otros mensajes
@@ -50,21 +51,25 @@ async function handleMessage(message) {
 }
 
 async function sendTextMessage(url, token, to, text) {
-    await axios.post(
-        url,
-        {
-            messaging_product: 'whatsapp',
-            to: to,
-            type: 'text',
-            text: { body: text }
-        },
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
+    try {
+        await axios.post(
+            url,
+            {
+                messaging_product: 'whatsapp',
+                to: to,
+                type: 'text',
+                text: { body: text }
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             }
-        }
-    );
+        );
+    } catch (error) {
+        console.error('Error detallado enviando texto:', JSON.stringify(error.response?.data, null, 2));
+    }
 }
 
 module.exports = { handleMessage };
