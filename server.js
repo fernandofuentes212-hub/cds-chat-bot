@@ -8,7 +8,6 @@ app.use(bodyParser.json());
 const PORT = process.env.PORT || 10000;
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 
-// Ruta de verificación del Webhook actualizada
 app.get('/api/webhook', (req, res) => {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
@@ -26,8 +25,10 @@ app.get('/api/webhook', (req, res) => {
     }
 });
 
-// Ruta POST actualizada para recibir los mensajes
 app.post('/api/webhook', async (req, res) => {
+    // 1. Respondemos a Meta INMEDIATAMENTE para evitar que cancele la petición
+    res.sendStatus(200);
+
     console.log('Webhook recibido:', JSON.stringify(req.body, null, 2));
 
     const body = req.body;
@@ -41,18 +42,15 @@ app.post('/api/webhook', async (req, res) => {
 
                         if (messages && messages.length > 0) {
                             const message = messages[0];
+                            // 2. Procesamos el mensaje en segundo plano
                             await handleMessage(message);
                         }
                     }
                 }
             }
-            res.sendStatus(200);
         } catch (error) {
             console.error('Error procesando el webhook:', error);
-            res.sendStatus(500);
         }
-    } else {
-        res.sendStatus(404);
     }
 });
 
