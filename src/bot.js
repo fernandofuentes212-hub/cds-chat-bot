@@ -11,8 +11,8 @@ async function handleMessage(message) {
     const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
     const url = `https://graph.facebook.com/v17.0/${phoneId}/messages`;
 
-    // Si el usuario pide la promoción
-    if (messageText.includes('promocion') || messageText.includes('promoción')) {
+    // Detecta cualquier variante como promocion, promociones o promoción
+    if (messageText.includes('promoc')) {
         try {
             const promo = await getLatestPromo();
 
@@ -41,7 +41,6 @@ async function handleMessage(message) {
                 }
             );
         } catch (error) {
-            // Imprime el error exacto que devuelve Meta para diagnosticarlo de inmediato
             console.error('Error detallado de Meta:', JSON.stringify(error.response?.data, null, 2));
         }
     } else {
