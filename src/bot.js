@@ -8,7 +8,7 @@ async function handleMessage(message) {
     if (!messageText) return;
 
     const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
-    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID; // Lee directamente de las variables de entorno de Render
+    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID; // Lee correctamente el ID desde las variables de entorno de Render
     const url = `https://graph.facebook.com/v17.0/${phoneId}/messages`;
 
     // Si el usuario pide la promoción
