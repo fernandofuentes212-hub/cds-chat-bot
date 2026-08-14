@@ -1,13 +1,14 @@
 const axios = require('axios');
 const { getLatestPromo } = require('./supabase');
 
-async function handleMessage(message, phoneId) {
+async function handleMessage(message) {
     const senderPhone = message.from; // Número del cliente
     const messageText = message.text?.body?.toLowerCase().trim();
 
     if (!messageText) return;
 
     const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID; // Lee directamente de las variables de entorno de Render
     const url = `https://graph.facebook.com/v17.0/${phoneId}/messages`;
 
     // Si el usuario pide la promoción
