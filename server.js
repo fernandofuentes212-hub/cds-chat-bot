@@ -1,19 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
-const { handleMessage } = require('./src/bot');
-
-dotenv.config();
+const { handleMessage } = require('./bot');
 
 const app = express();
 app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
+const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 
 // Ruta de verificación del Webhook para Meta
 app.get('/webhook', (req, res) => {
-    const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
-
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
@@ -38,31 +34,25 @@ app.post('/webhook', async (req, res) => {
         try {
             for (const entry of body.entry) {
                 for (const change of entry.changes) {
-                    if (change.value.messages) {
-                        const message = change.value.messages[0];
-                        const phoneId = change.value.metadata.phone_number_id;
-                        await handleMessage(message, phoneId);
+                    if (change.field === 'messages') {
+                        const metadata = change.value.metadata;
+                        const messages = change.value.messages;
+
+                        if (messages && messages.length > 0) {
+                            const message = messages[0];
+                            // Llama a handleMessage pasando solo el mensaje (el ID se lee de process.env dentro)
+                            await handleMessage(message);
+                        }
                     }
                 }
             }
-            res.status(200).send('EVENT_RECEIVED');
+            res.sendStatus(200);
         } catch (error) {
-            console.error('Error procesando el mensaje:', error);
+            console.error('Error procesando el webhook:', error);
             res.sendStatus(500);
         }
     } else {
         res.sendStatus(404);
-    }
-});
-
-// Ruta para probar el endpoint de promociones (la que consultaste en Supabase)
-app.get('/promocion', async (req, res) => {
-    try {
-        const { getLatestPromo } = require('./src/supabase');
-        const promo = await getLatestPromo();
-        res.json({ ok: true, promocion: promo });
-    } catch (error) {
-        res.status(500).json({ ok: false, error: error.message });
     }
 });
 
